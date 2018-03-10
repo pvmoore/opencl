@@ -28,8 +28,14 @@
 
 /// OpenCL
 #include <CL/opencl.h>
+#pragma comment(lib, "../External/OpenCL")
 
 /// Core
 #include <Core/Core/core.h>
+#ifdef _DEBUG
+#pragma comment(lib, "../../Core/x64/Debug/Core.lib")
+#else 
+#pragma comment(lib, "../../Core/x64/Release/Core.lib")
+#endif
 
 #pragma warning(disable : 4101) /// unused variable

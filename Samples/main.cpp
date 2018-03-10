@@ -8,10 +8,6 @@ using std::shared_ptr;
 #include "../OpenCL/_exports.h"
 using namespace opencl;
 
-/// Include the lib files
-#pragma comment(lib, "../../Core/x64/Debug/Core")
-#pragma comment(lib, "../External/OpenCL")
-
 void addExample();
 void enqueueExample();
 void imageReadExample();
