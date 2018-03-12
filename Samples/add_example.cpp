@@ -2,6 +2,7 @@
 
 using namespace core;
 using std::string;
+using std::wstring;
 using std::vector;
 using std::shared_ptr;
 
@@ -42,7 +43,7 @@ void addExample() {
 		Buffer outputBuffer = context.createDeviceBuffer(sizeof(uint) * N, CL_MEM_WRITE_ONLY);
 
 		vector<string> options = {"-Werror", "-I MyIncludes/", "-D MYDEF=2", "-O5"};
-		Program program = context.createProgram("Kernels/add.cl", options);
+		Program program = context.createProgram(L"Kernels/add.cl", options);
 
 		uint delta = 50;
 
@@ -57,7 +58,7 @@ void addExample() {
 		queue.enqueueWriteBuffer(inputBuffer2, inputB);
 
 		/// Execute the kernel
-		cl_event kernelEvent;
+		Event kernelEvent;
 		queue.enqueueKernel(
 			kernel,
 			{N},					// global sizes
@@ -71,8 +72,8 @@ void addExample() {
 		queue.finish();
 		auto end = std::chrono::high_resolution_clock::now();
 
-		auto kernelTime = getRunTime(kernelEvent);
-		release(kernelEvent);
+		auto kernelTime = kernelEvent.getRunTime();
+		kernelEvent.release();
 
 		printf("\n");
 		printf("Num kernel threads executed .. %u\n", N);

@@ -6,7 +6,7 @@ class CommandQueue {
 public:
 	struct EventArgs final {
 		vector<cl_event> waitList;
-		cl_event* event = nullptr;
+		Event* event = nullptr;
 		inline uint numWaitEvents() const { return (uint)waitList.size(); }
 	};
 
@@ -35,9 +35,9 @@ public:
 			readOffset, 			// read offset
 			numBytes,    			// num bytes to read
 			dest, 					// dest ptr
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),	
+			args.waitList.data(),	
+			args.event ? &args.event->id : nullptr			
 		));
 	}
 	/// Write entire buffer
@@ -59,9 +59,9 @@ public:
 			destOffset, 			// write offset
 			numBytes,   			// num bytes to write
 			src, 					// source ptr
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueWriteBufferRect(const Buffer& dest,
@@ -86,17 +86,17 @@ public:
 			0,						// host row pitch
 			0,						// host slice pitch
 			hostPtr,
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueBarrier(EventArgs args = {}) {
 		throwOnCLError(clEnqueueBarrierWithWaitList(
 			id,
-			args.numWaitEvents(),		// wait list size
-			args.waitList.data(),		// event wait list
-			args.event					// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	/// Fill entire buffer with value.
@@ -109,9 +109,9 @@ public:
 			sizeof(T),				// pattern size
 			0,						// offset
 			buffer.size,			// size
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	/// Copy whole buffer (assumes same size)
@@ -132,9 +132,9 @@ public:
 			srcOffset,              // src offset
 			destOffset,             // dest offset
 			numBytes, 	            // num bytes
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueCopyBufferToImage(const Buffer& src,
@@ -152,9 +152,9 @@ public:
 			0,                      // src offset
 			dest_origin,            // dest origin
 			region,                 // region
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueWriteImage(const Image& image,
@@ -173,9 +173,9 @@ public:
 			0,
 			0,
 			hostPtr,
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueReadImage(const Image& image,
@@ -194,9 +194,9 @@ public:
 			0,						// row pitch
 			0,						// slice pitch
 			hostPtr,
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueAcquireGLObjects(const vector<MemObject> objects, EventArgs args = {}) {
@@ -208,9 +208,9 @@ public:
 			id,
 			(uint)objects.size(),
 			ids.data(),
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueReleaseGLObjects(const vector<MemObject> objects, EventArgs args = {}) {
@@ -222,9 +222,9 @@ public:
 			id,
 			(uint)objects.size(),
 			ids.data(),
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	/// Maps a region of buffer into the host address space
@@ -245,9 +245,9 @@ public:
 			flags,
 			offset,
 			numBytes,
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event,				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr,
 			&err
 		);
 		throwOnCLError(err);
@@ -276,9 +276,9 @@ public:
 			region,
 			rowPitch,
 			slicePitch,
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event,				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr,
 			&err
 		);
 		throwOnCLError(err);
@@ -290,9 +290,9 @@ public:
 			id,
 			buf.id,
 			ptr,
-			args.numWaitEvents(),	// wait list size
-			args.waitList.data(),	// event wait list
-			args.event				// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		));
 	}
 	void enqueueKernel(const Kernel& kernel,
@@ -312,9 +312,9 @@ public:
 			nullptr,					// always set this to null
 			globalSizes.data(),			// global work sizes
 			local,						// local work sizes
-			args.numWaitEvents(),		// wait list size
-			args.waitList.data(),		// event wait list
-			args.event					// event
+			args.numWaitEvents(),
+			args.waitList.data(),
+			args.event ? &args.event->id : nullptr
 		);
 		throwOnCLError(err);
 	}

@@ -6,10 +6,10 @@ class Program {
 	cl_context contextId;
 public:
 	cl_program id;
-	string filename;
+	wstring filename;
 	Device& device;
 
-	Program(cl_context ctxId, Device& device, const string& fileName, vector<string> options) 
+	Program(cl_context ctxId, Device& device, const wstring& fileName, vector<string> options) 
 		: contextId(ctxId), device(device), filename(fileName) 
 	{
 		load(options);
@@ -30,7 +30,7 @@ private:
 		const size_t len = src.length();
 		this->id = clCreateProgramWithSource(contextId, 1, (const char**)&srcStr, &len, &err);
 		throwOnCLError(err);
-		printf("Building program: %s\n", filename.c_str());
+		printf("Building program: %s\n", WString::toString(filename).c_str());
 
 		/// Concatenate options
 		string optionsStr;

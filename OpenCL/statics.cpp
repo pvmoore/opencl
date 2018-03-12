@@ -2,6 +2,7 @@
 
 using namespace core;
 using std::string;
+using std::wstring;
 using std::vector;
 using std::shared_ptr;
 
@@ -47,6 +48,12 @@ void throwOnCLError(int err) {
 
 namespace opencl {
 
+Event createUserEvent(shared_ptr<Context> ctx) {
+	int err;
+	cl_event evt = clCreateUserEvent(ctx->context, &err);
+	throwOnCLError(err);
+	return Event{evt};
+}
 void Kernel::createKernel() {
 	int err;
 	this->id = clCreateKernel(program.id, name.c_str(), &err);

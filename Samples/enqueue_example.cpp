@@ -2,6 +2,7 @@
 
 using namespace core;
 using std::string;
+using std::wstring;
 using std::vector;
 using std::shared_ptr;
 
@@ -38,7 +39,7 @@ void enqueueExample() {
 
 		queue.enqueueWriteBuffer(inBuf, inData);
 
-		auto program = context.createProgram("Kernels/enqueue.cl", {
+		auto program = context.createProgram(L"Kernels/enqueue.cl", {
 				"-g"		// adds debugging info about enqueued kernels
 			}
 		);
@@ -50,7 +51,7 @@ void enqueueExample() {
 		/// Create the device queue otherwise you will get an out of resources error
 		auto deviceQueue = context.createDeviceQueue();
 
-		cl_event kernelEvent;
+		Event kernelEvent;
 		queue.enqueueKernel(
 			kernel,
 			{N},					// global sizes
@@ -64,8 +65,7 @@ void enqueueExample() {
 		queue.finish();
 		auto end = std::chrono::high_resolution_clock::now();
 
-		auto kernelTime = getRunTime(kernelEvent);
-		release(kernelEvent);
+		auto kernelTime = kernelEvent.getRunTime();
 
 		printf("\n");
 		printf("Num kernel threads executed .. %u user + 3 device\n", N);

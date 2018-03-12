@@ -105,7 +105,7 @@ public:
 		throwOnCLError(err);
 		return CommandQueue{queueId};
 	}
-	Program createProgram(const string& filename, vector<string> options = {}) {
+	Program createProgram(const wstring& filename, vector<string> options = {}) {
 		return Program{context, device, filename, options};
 	}
 };

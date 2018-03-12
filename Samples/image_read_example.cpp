@@ -2,6 +2,7 @@
 
 using namespace core;
 using std::string;
+using std::wstring;
 using std::vector;
 using std::shared_ptr;
 
@@ -54,7 +55,7 @@ void imageReadExample() {
 			nullptr
 		);
 
-		auto program = context.createProgram("kernels/image_read.cl");
+		auto program = context.createProgram(L"kernels/image_read.cl");
 
 		auto kernel = program.getKernel("RandomImageRead");
 		kernel.setArg(0, image2d);
@@ -62,7 +63,7 @@ void imageReadExample() {
 
 		queue.enqueueWriteImage(image2d, input);
 
-		cl_event kernelEvent;
+		Event kernelEvent;
 		queue.enqueueKernel(
 			kernel,
 			{N},					// global sizes
@@ -75,8 +76,7 @@ void imageReadExample() {
 		queue.finish();
 		auto end = std::chrono::high_resolution_clock::now();
 
-		auto kernelTime = getRunTime(kernelEvent);
-		release(kernelEvent);
+		auto kernelTime = kernelEvent.getRunTime();
 
 		printf("\n");
 		printf("Num kernel threads executed .. %u\n", N);

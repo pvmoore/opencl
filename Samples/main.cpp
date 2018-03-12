@@ -2,6 +2,7 @@
 
 using namespace core;
 using std::string;
+using std::wstring;
 using std::vector;
 using std::shared_ptr;
 

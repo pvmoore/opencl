@@ -2,6 +2,7 @@
 
 using namespace core;
 using std::string;
+using std::wstring;
 using std::vector;
 using std::shared_ptr;
 
@@ -56,7 +57,7 @@ void sortExample() {
 		/// The data set needs to be a multiple of the work group size
 		assert(N%WORK_GROUP_SIZE==0);
 
-		auto program = context.createProgram("Kernels/sort.cl",
+		auto program = context.createProgram(L"Kernels/sort.cl",
 			{
 				String::format("-D WORK_GROUP_SIZE=%u", WORK_GROUP_SIZE).c_str(),
 				String::format("-D ASCENDING=%s", ascending ? "true":"false").c_str()
@@ -78,7 +79,7 @@ void sortExample() {
 
 		/// Run the sortKernel
 		printf("\nSorting %u local chunks of %u values\n", N/WORK_GROUP_SIZE, WORK_GROUP_SIZE);
-		cl_event sortKernelEvent;
+		Event sortKernelEvent;
 		queue.enqueueKernel(
 			sortKernel,
 			{N},					// global sizes
@@ -119,8 +120,7 @@ void sortExample() {
 		queue.finish();
 		auto end = std::chrono::high_resolution_clock::now();
 
-		auto sortKernelTime = getRunTime(sortKernelEvent);
-		release(sortKernelEvent);
+		auto sortKernelTime = sortKernelEvent.getRunTime();
 
 		printf("\n");
 		printf("Num kernel threads executed .. %u\n", N);
